@@ -4,9 +4,14 @@ namespace Domain\Mail\Models\Sequence;
 
 use Domain\Mail\Enums\Sequence\SequenceStatus;
 use Domain\Shared\Models\BaseModel;
+use Domain\Shared\Models\Concerns\HasUser;
+use Spatie\LaravelData\WithData;
 
 class Sequence extends BaseModel
 {
+    use WithData;
+    use HasUser;
+
     protected $fillable = [
         'title',
         'status',
