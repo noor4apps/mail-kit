@@ -2,6 +2,8 @@
 
 namespace Domain\Subscriber\DataTransferObjects;
 
+use Domain\Subscriber\Models\Form;
+use Domain\Subscriber\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Data;
@@ -26,7 +28,7 @@ class SubscriberData extends Data
 
         return self::from([
             ...$request->all(),
-            'tags' => TagData::collection(Tag::whereIn('id', $request->collect('tag_ids'))->get()),
+            'tags' => TagData::collect(Tag::whereIn('id', $request->collect('tag_ids'))->get()),
             'form' => FormData::from(Form::findOrNew($request->form_id)),
         ]);
     }

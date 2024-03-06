@@ -23,6 +23,7 @@ class UpsertSubscriberViewModel extends ViewModel
             return null;
         }
 
+        // convert it to a data object
         return $this->subscriber->load('tags', 'form')->getData();
     }
 
@@ -31,6 +32,7 @@ class UpsertSubscriberViewModel extends ViewModel
      */
     public function tags(): Collection
     {
+        // convert it to Collection of data object
         return Tag::all()->map->getData();
     }
 
@@ -39,6 +41,7 @@ class UpsertSubscriberViewModel extends ViewModel
      */
     public function forms(): Collection
     {
+        // convert it to Collection of data object
         return Form::all()->map->getData();
     }
 }
