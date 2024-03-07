@@ -2,12 +2,17 @@
 
 namespace Domain\Subscriber\DataTransferObjects;
 
+use Carbon\Carbon;
 use Domain\Subscriber\Models\Form;
+use Domain\Subscriber\Models\Subscriber;
 use Domain\Subscriber\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
+use Spatie\LaravelData\Lazy;
 
 class SubscriberData extends Data
 {
@@ -16,9 +21,12 @@ class SubscriberData extends Data
         public readonly string          $email,
         public readonly string          $first_name,
         public readonly ?string         $last_name,
+        public readonly ?string         $full_name,
+        #[WithCast(DateTimeInterfaceCast::class, format: "Y-m-d H:i:s")]
+        public readonly ?Carbon         $subscribed_at,
         /** @var DataCollection<TagData> */
-        public readonly ?DataCollection $tags,
-        public readonly ?FormData       $form,
+        public readonly null|Lazy|DataCollection    $tags,
+        public readonly null|Lazy|FormData          $form,
     )
     {
     }
@@ -30,6 +38,16 @@ class SubscriberData extends Data
             ...$request->all(),
             'tags' => TagData::collect(Tag::whereIn('id', $request->collect('tag_ids'))->get()),
             'form' => FormData::from(Form::findOrNew($request->form_id)),
+        ]);
+    }
+
+    public static function fromModel(Subscriber $subscriber): self
+    {
+        return self::from([
+            ...$subscriber->toArray(),
+            'tags' => Lazy::whenLoaded('tags', $subscriber, fn () => TagData::collect($subscriber->tags)),
+            'form' => Lazy::whenLoaded('form', $subscriber, fn () => FormData::from($subscriber->form)),
+            'full_name' => $subscriber->full_name,
         ]);
     }
 
