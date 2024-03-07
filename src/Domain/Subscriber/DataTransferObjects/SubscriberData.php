@@ -43,7 +43,7 @@ class SubscriberData extends Data
             ],
             'first_name' => ['required', 'string'],
             'last_name' => ['nullable', 'sometimes', 'string'],
-            'tags' => ['nullable', 'sometimes', 'array'],
+            'tag_ids' => ['nullable', 'sometimes', 'array'],
             'form_id' => ['nullable', 'sometimes', 'exists:forms,id'],
         ];
     }
