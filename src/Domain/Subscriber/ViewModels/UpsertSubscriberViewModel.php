@@ -2,6 +2,8 @@
 
 namespace Domain\Subscriber\ViewModels;
 
+use Domain\Shared\ViewModels\Concerns\HasForms;
+use Domain\Shared\ViewModels\Concerns\HasTags;
 use Domain\Shared\ViewModels\ViewModel;
 use Domain\Subscriber\DataTransferObjects\FormData;
 use Domain\Subscriber\DataTransferObjects\SubscriberData;
@@ -13,6 +15,9 @@ use Illuminate\Support\Collection;
 
 class UpsertSubscriberViewModel extends ViewModel
 {
+    use HasTags;
+    use HasForms;
+
     public function __construct(public readonly ?Subscriber $subscriber = null)
     {
     }
@@ -25,23 +30,5 @@ class UpsertSubscriberViewModel extends ViewModel
 
         // convert it to a data object
         return $this->subscriber->load('tags', 'form')->getData();
-    }
-
-    /**
-     * @return Collection<TagData>
-     */
-    public function tags(): Collection
-    {
-        // convert it to Collection of data object
-        return Tag::all()->map->getData();
-    }
-
-    /**
-     * @return Collection<FormData>
-     */
-    public function forms(): Collection
-    {
-        // convert it to Collection of data object
-        return Form::all()->map->getData();
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Web\Controllers\Mail\Broadcast\BroadcastController;
 use App\Http\Web\Controllers\Subscriber\ImportSubscribersController;
 use App\Http\Web\Controllers\Subscriber\SubscriberController;
 use Illuminate\Foundation\Application;
@@ -34,6 +35,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::resource('subscribers', SubscriberController::class);
     Route::post('subscribers/import', ImportSubscribersController::class);
+
+    Route::resource('broadcasts', BroadcastController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
