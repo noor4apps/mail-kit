@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Domain\Mail\DataTransferObjects\FilterData;
 use Domain\Mail\Enums\Broadcast\BroadcastStatus;
 use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Casts\EnumCast;
 use Spatie\LaravelData\Data;
 
@@ -16,6 +17,7 @@ class BroadcastData extends Data
         public readonly string           $subject,
         public readonly string           $content,
         public readonly ?FilterData      $filters,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         public readonly ?Carbon          $sent_at,
         #[WithCast(EnumCast::class)]
         public readonly ?BroadcastStatus $status = BroadcastStatus::Draft,

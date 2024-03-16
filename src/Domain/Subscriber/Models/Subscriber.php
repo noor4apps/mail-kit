@@ -8,10 +8,12 @@ use Domain\Subscriber\DataTransferObjects\SubscriberData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Notifications\Notifiable;
 use Spatie\LaravelData\WithData;
 
 class Subscriber extends BaseModel
 {
+    use Notifiable;
     use WithData;
     use HasUser;
 

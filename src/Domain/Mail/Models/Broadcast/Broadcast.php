@@ -5,13 +5,11 @@ namespace Domain\Mail\Models\Broadcast;
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
 use Domain\Mail\Models\Casts\FiltersCast;
 use Domain\Mail\Enums\Broadcast\BroadcastStatus;
-use Domain\Mail\DataTransferObjects\FilterData;
+use Domain\Mail\Models\SentMail;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
-use Domain\Subscriber\Models\Subscriber;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\LaravelData\WithData;
-use Illuminate\Contracts\Database\Query\Builder;
 
 class Broadcast extends BaseModel
 {
@@ -38,4 +36,16 @@ class Broadcast extends BaseModel
     protected $attributes = [
         'status' => BroadcastStatus::Draft,
     ];
+
+    public function sent_mails(): MorphMany
+    {
+        return $this->morphMany(SentMail::class, 'sendable');
+    }
+
+    public function markAsSent(): void
+    {
+        $this->status = BroadcastStatus::Sent;
+        $this->sent_at = now();
+        $this->save();
+    }
 }
