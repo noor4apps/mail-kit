@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Web\Controllers\Mail\Broadcast\BroadcastController;
+use App\Http\Web\Controllers\Mail\Broadcast\PreviewBroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\SendBroadcastController;
 use App\Http\Web\Controllers\Subscriber\ImportSubscribersController;
 use App\Http\Web\Controllers\Subscriber\SubscriberController;
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('broadcasts', BroadcastController::class);
     Route::patch('broadcasts/{broadcast}/send', SendBroadcastController::class);
+    Route::get('broadcasts/{broadcast}/preview', PreviewBroadcastController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
