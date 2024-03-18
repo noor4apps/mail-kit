@@ -1,12 +1,14 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import PerformanceLine from "@/Components/Mail/PerformanceLine.vue";
 
 export default {
     components: {
         AuthenticatedLayout,
         Head,
         Link,
+        PerformanceLine
     },
     props: {
         model: {
@@ -79,7 +81,8 @@ export default {
                         <div class="text-sm text-gray-900">{{ broadcast.status }}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div>-</div>
+                        <PerformanceLine v-if="broadcast.status !== 'draft'" :performance="model.performances[broadcast.id]" />
+                        <div v-else>-</div>
                     </td>
                     <td class="px-6 py-4">
                         <button @click="preview(broadcast)" class="bg-transparent hover:bg-blue-500 text-blue-700 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" type="button">
