@@ -2,6 +2,7 @@
 
 namespace Domain\Mail\Models;
 
+use Domain\Mail\Builders\SentMail\SentMailBuilder;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
 use Domain\Subscriber\Models\Subscriber;
@@ -24,6 +25,11 @@ class SentMail extends BaseModel
     protected $casts = [
         'sent_at' => 'datetime',
     ];
+
+    public function newEloquentBuilder($query): SentMailBuilder
+    {
+        return new SentMailBuilder($query);
+    }
 
     public function subscriber(): BelongsTo
     {

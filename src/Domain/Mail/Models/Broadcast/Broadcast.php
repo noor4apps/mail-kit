@@ -2,6 +2,7 @@
 
 namespace Domain\Mail\Models\Broadcast;
 
+use Domain\Mail\Contracts\sendable;
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
 use Domain\Mail\Models\Casts\FiltersCast;
 use Domain\Mail\Enums\Broadcast\BroadcastStatus;
@@ -11,7 +12,7 @@ use Domain\Shared\Models\Concerns\HasUser;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\LaravelData\WithData;
 
-class Broadcast extends BaseModel
+class Broadcast extends BaseModel implements sendable
 {
     use WithData;
     use HasUser;
@@ -47,5 +48,17 @@ class Broadcast extends BaseModel
         $this->status = BroadcastStatus::Sent;
         $this->sent_at = now();
         $this->save();
+    }
+
+    // -------- Sendable --------
+
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    public function type(): string
+    {
+        return $this::class;
     }
 }
