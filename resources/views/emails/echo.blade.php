@@ -1,1 +1,1 @@
-{!! $broadcast->content !!}
+{!! $mail->content() !!}

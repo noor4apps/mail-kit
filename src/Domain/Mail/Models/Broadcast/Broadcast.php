@@ -61,4 +61,14 @@ class Broadcast extends BaseModel implements sendable
     {
         return $this::class;
     }
+
+    public function subject(): string
+    {
+        return $this->subject;
+    }
+
+    public function content(): string
+    {
+        return $this->content;
+    }
 }
