@@ -88,7 +88,7 @@ export default {
                 </Link>
             </div>
             <button v-if="model.sequence.status === 'draft'" @click="publish()" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" type="button">
-                Publish
+                Publish sequence
             </button>
         </template>
         <div class="py-12 max-w-7xl grid grid-cols-2">
@@ -101,7 +101,7 @@ export default {
                 @removed="removeMail()"
             />
 
-            <SequenceMailList :mails="model.sequence.mails" @selected="selectedMail = $event" @mailAdded="addMail()" />
+            <SequenceMailList :mails="model.sequence.mails" @selected="selectedMail = $event" @mailAdded="addMail()" :select="selectedMail"/>
         </div>
     </AuthenticatedLayout>
 </template>

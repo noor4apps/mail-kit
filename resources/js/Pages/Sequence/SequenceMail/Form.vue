@@ -40,7 +40,7 @@ export default {
 }
 </script>
 <template>
-    <form v-if="mail" class="w-full max-w-lg mx-auto">
+    <form v-if="mail" class="w-full max-w-lg mx-auto p-4 bg-green-100">
         <div class="flex flex-wrap -mx-3 mb-6">
             <div class="w-full px-3 mb-6 md:mb-0">
                 <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="subject">
