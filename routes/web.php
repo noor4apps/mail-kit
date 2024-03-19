@@ -4,6 +4,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Web\Controllers\Mail\Broadcast\BroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\PreviewBroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\SendBroadcastController;
+use App\Http\Web\Controllers\Mail\Sequence\PreviewSequenceMailController;
+use App\Http\Web\Controllers\Mail\Sequence\PublishSequenceController;
+use App\Http\Web\Controllers\Mail\Sequence\SequenceController;
+use App\Http\Web\Controllers\Mail\Sequence\SequenceMailController;
 use App\Http\Web\Controllers\Subscriber\ImportSubscribersController;
 use App\Http\Web\Controllers\Subscriber\SubscriberController;
 use Illuminate\Foundation\Application;
@@ -41,6 +45,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('broadcasts', BroadcastController::class);
     Route::patch('broadcasts/{broadcast}/send', SendBroadcastController::class);
     Route::get('broadcasts/{broadcast}/preview', PreviewBroadcastController::class);
+
+    Route::resource('sequences', SequenceController::class);
+    Route::patch('sequences/{sequence}/publish', PublishSequenceController::class);
+
+    Route::resource('sequences/{sequence}/mails', SequenceMailController::class);
+    Route::get('sequences/{sequence}/mails/{mail}/preview', PreviewSequenceMailController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
