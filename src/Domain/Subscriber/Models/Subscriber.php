@@ -3,6 +3,7 @@
 namespace Domain\Subscriber\Models;
 
 use Domain\Mail\Models\SentMail;
+use Domain\Mail\Models\Sequence\SequenceMail;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
 use Domain\Subscriber\Builders\SubscriberBuilder;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Spatie\LaravelData\WithData;
 
@@ -50,6 +52,18 @@ class Subscriber extends BaseModel
     public function received_mails(): HasMany
     {
         return $this->hasMany(SentMail::class);
+    }
+
+    public function last_received_mail(): HasOne
+    {
+        return $this->hasOne(SentMail::class)
+            ->latestOfMany()
+            ->withDefault();
+    }
+
+    public function tooEarlyFor(SequenceMail $mail): bool
+    {
+        return !$mail->enoughTimePassedSince($this->last_received_mail);
     }
 
 
