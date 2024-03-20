@@ -10,6 +10,9 @@ use Domain\Mail\Enums\Broadcast\BroadcastStatus;
 use Domain\Mail\Models\SentMail;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
+use Domain\Subscriber\Models\Concerns\HasAudience;
+use Domain\Subscriber\Models\Subscriber;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\LaravelData\WithData;
 
@@ -17,6 +20,7 @@ class Broadcast extends BaseModel implements Sendable
 {
     use WithData;
     use HasUser;
+    use HasAudience;
 
     protected $dataClass = BroadcastData::class;
 
@@ -73,8 +77,15 @@ class Broadcast extends BaseModel implements Sendable
         return $this->content;
     }
 
+    // -------- HasAudience --------
+
     public function filters(): FilterData
     {
         return $this->filters;
+    }
+
+    protected function audienceQuery(): Builder
+    {
+        return Subscriber::query();
     }
 }

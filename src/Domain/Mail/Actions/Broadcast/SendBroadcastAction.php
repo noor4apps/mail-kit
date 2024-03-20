@@ -5,7 +5,6 @@ namespace Domain\Mail\Actions\Broadcast;
 use Domain\Mail\Exceptions\Broadcast\CannotSendBroadcast;
 use Domain\Mail\Mails\EchoMail;
 use Domain\Mail\Models\Broadcast\Broadcast;
-use Domain\Subscriber\Actions\FilterSubscribersAction;
 use Domain\Subscriber\Models\Subscriber;
 use Illuminate\Support\Facades\Mail;
 
@@ -17,7 +16,7 @@ class SendBroadcastAction
             throw CannotSendBroadcast::because("Broadcast already sent at {$broadcast->sent_at}");
         }
 
-        $subscribers = FilterSubscribersAction::execute($broadcast)
+        $subscribers = $broadcast->audience()
             ->each(
                 fn(Subscriber $subscriber) => Mail::to($subscriber)->queue(new EchoMail($broadcast))
             );

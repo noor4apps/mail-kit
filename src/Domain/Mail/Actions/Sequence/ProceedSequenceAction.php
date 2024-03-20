@@ -5,7 +5,6 @@ namespace Domain\Mail\Actions\Sequence;
 use Domain\Mail\Mails\EchoMail;
 use Domain\Mail\Models\Sequence\Sequence;
 use Domain\Mail\Models\Sequence\SequenceMail;
-use Domain\Subscriber\Actions\FilterSubscribersAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -39,7 +38,7 @@ class ProceedSequenceAction
             return collect([]);
         }
 
-        return FilterSubscribersAction::execute($mail)
+        return $mail->audience()
             ->reject->alreadyReceived($mail)
             ->reject->tooEarlyFor($mail);
     }
