@@ -9,6 +9,7 @@ use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class SequenceMail extends BaseModel implements Sendable
 {
@@ -42,6 +43,13 @@ class SequenceMail extends BaseModel implements Sendable
     public function sequence(): BelongsTo
     {
         return $this->belongsTo(Sequence::class);
+    }
+
+    public function shouldSendToday(): bool
+    {
+        $dayName = Str::lower(now()->dayName);
+
+        return $this->schedule->allowed_days->{$dayName};
     }
 
     // -------- Sendable --------
