@@ -2,6 +2,7 @@
 
 namespace Domain\Mail\Models\Sequence;
 
+use Domain\Mail\Builders\Sequence\SequenceMailBuilder;
 use Domain\Mail\Contracts\Sendable;
 use Domain\Mail\Enums\Sequence\SequenceMailStatus;
 use Domain\Mail\Models\Casts\FiltersCast;
@@ -35,6 +36,11 @@ class SequenceMail extends BaseModel implements Sendable
     protected $attributes = [
         'status' => SequenceMailStatus::Draft,
     ];
+
+    public function newEloquentBuilder($query): SequenceMailBuilder
+    {
+        return new SequenceMailBuilder($query);
+    }
 
     public function schedule(): HasOne
     {
