@@ -2,8 +2,9 @@
 
 namespace Domain\Mail\Models\Broadcast;
 
-use Domain\Mail\Contracts\sendable;
+use Domain\Mail\Contracts\Sendable;
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
+use Domain\Mail\DataTransferObjects\FilterData;
 use Domain\Mail\Models\Casts\FiltersCast;
 use Domain\Mail\Enums\Broadcast\BroadcastStatus;
 use Domain\Mail\Models\SentMail;
@@ -12,7 +13,7 @@ use Domain\Shared\Models\Concerns\HasUser;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\LaravelData\WithData;
 
-class Broadcast extends BaseModel implements sendable
+class Broadcast extends BaseModel implements Sendable
 {
     use WithData;
     use HasUser;
@@ -70,5 +71,10 @@ class Broadcast extends BaseModel implements sendable
     public function content(): string
     {
         return $this->content;
+    }
+
+    public function filters(): FilterData
+    {
+        return $this->filters;
     }
 }

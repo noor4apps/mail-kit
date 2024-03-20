@@ -2,7 +2,7 @@
 
 namespace Domain\Mail\Actions;
 
-use Domain\Mail\Contracts\sendable;
+use Domain\Mail\Contracts\Sendable;
 use Domain\Mail\DataTransferObjects\PerformanceData;
 use Domain\Mail\Models\SentMail;
 

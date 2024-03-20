@@ -4,6 +4,7 @@ namespace Domain\Mail\Models\Sequence;
 
 use Domain\Mail\Builders\Sequence\SequenceMailBuilder;
 use Domain\Mail\Contracts\Sendable;
+use Domain\Mail\DataTransferObjects\FilterData;
 use Domain\Mail\Enums\Sequence\SequenceMailStatus;
 use Domain\Mail\Models\Casts\FiltersCast;
 use Domain\Mail\Models\SentMail;
@@ -11,6 +12,7 @@ use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class SequenceMail extends BaseModel implements Sendable
@@ -52,6 +54,11 @@ class SequenceMail extends BaseModel implements Sendable
         return $this->belongsTo(Sequence::class);
     }
 
+    public function sent_mails(): MorphMany
+    {
+        return $this->morphMany(SentMail::class, 'sendable');
+    }
+
     public function shouldSendToday(): bool
     {
         $dayName = Str::lower(now()->dayName);
@@ -84,5 +91,10 @@ class SequenceMail extends BaseModel implements Sendable
     public function content(): string
     {
         return $this->content;
+    }
+
+    public function filters(): FilterData
+    {
+        return $this->filters;
     }
 }

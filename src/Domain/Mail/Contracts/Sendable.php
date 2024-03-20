@@ -2,7 +2,9 @@
 
 namespace Domain\Mail\Contracts;
 
-interface sendable
+use Domain\Mail\DataTransferObjects\FilterData;
+
+interface Sendable
 {
     public function id(): int;
 
@@ -11,4 +13,6 @@ interface sendable
     public function subject(): string;
 
     public function content(): string;
+
+    public function filters(): FilterData;
 }
