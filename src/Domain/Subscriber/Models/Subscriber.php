@@ -2,12 +2,15 @@
 
 namespace Domain\Subscriber\Models;
 
+use Domain\Mail\Models\SentMail;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
+use Domain\Subscriber\Builders\SubscriberBuilder;
 use Domain\Subscriber\DataTransferObjects\SubscriberData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Spatie\LaravelData\WithData;
 
@@ -28,6 +31,12 @@ class Subscriber extends BaseModel
         'user_id',
     ];
 
+    public function newEloquentBuilder($query): SubscriberBuilder
+    {
+        return new SubscriberBuilder($query);
+    }
+
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
@@ -37,6 +46,12 @@ class Subscriber extends BaseModel
     {
         return $this->belongsTo(Form::class)->withDefault();
     }
+
+    public function received_mails(): HasMany
+    {
+        return $this->hasMany(SentMail::class);
+    }
+
 
     public function fullName(): Attribute
     {
