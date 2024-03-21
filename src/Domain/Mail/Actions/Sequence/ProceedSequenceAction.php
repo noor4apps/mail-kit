@@ -8,57 +8,117 @@ use Domain\Mail\Models\Sequence\Sequence;
 use Domain\Mail\Models\Sequence\SequenceMail;
 use Domain\Mail\Models\Sequence\SequenceSubscriber;
 use Domain\Subscriber\Models\Subscriber;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 class ProceedSequenceAction
 {
-    public static function execute(Sequence $sequence): int
+    /**
+     * @var array<int, array<int>>
+     */
+    private static array $mailsBySubscribers = [];
+
+    public static function execute(Sequence $sequence): void
     {
-        $sentMailCount = 0;
+        self::$mailsBySubscribers = [];
 
         foreach ($sequence->mails()->wherePublished()->get() as $mail) {
-            $subscribers = self::subscribers($mail);
+            [$audience, $schedulableAudience] = self::audience($mail);
 
-            foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber)->queue(new EchoMail($mail));
+            self::sendMails($schedulableAudience, $mail, $sequence);
 
-                $mail->sent_mails()->create([
-                    'subscriber_id' => $subscriber->id,
-                    'user_id' => $sequence->user->id,
-                ]);
-            }
+            self::addMailToAudience($audience, $mail);
 
-            self::markAsInProgress($sequence, $subscribers);
-
-            $sentMailCount += $subscribers->count();
+            self::markAsInProgress($sequence, $schedulableAudience);
         }
 
-        return $sentMailCount;
+        self::markAsCompleted($sequence);
     }
 
-    private static function subscribers(SequenceMail $mail): Collection
+    /**
+     * @return array<Collection<Subscriber>>
+     */
+    private static function audience(SequenceMail $mail): array
     {
+        $audience = $mail->audience();
+
         if (!$mail->shouldSendToday()) {
-            return collect([]);
+            return [$audience, collect([])];
         }
 
-        return $mail->audience()
+        $schedulableAudience = $audience
             ->reject->alreadyReceived($mail)
             ->reject->tooEarlyFor($mail);
+
+        return [$audience, $schedulableAudience];
+    }
+
+    private static function sendMails(Collection $schedulableAudience, SequenceMail $mail, Sequence $sequence): void
+    {
+        foreach ($schedulableAudience as $subscriber) {
+            Mail::to($subscriber)->queue(new EchoMail($mail));
+
+            $mail->sent_mails()->create([
+                'subscriber_id' => $subscriber->id,
+                'user_id' => $sequence->user->id,
+            ]);
+        }
     }
 
     /**
      * @param Sequence $sequence
-     * @param Collection<Subscriber> $subscribers
+     * @param Collection<Subscriber> $schedulableAudience
      */
-    private static function markAsInProgress(Sequence $sequence, Collection $subscribers): void
+    private static function markAsInProgress(Sequence $sequence, Collection $schedulableAudience): void
     {
         SequenceSubscriber::query()
             ->whereBelongsTo($sequence)
-            ->whereIn('subscriber_id', $subscribers->pluck('id'))
+            ->whereIn('subscriber_id', $schedulableAudience->pluck('id'))
             ->update([
                 'status' => SubscriberStatus::InProgress,
             ]);
+    }
+
+    public static function markAsCompleted(Sequence $sequence): void
+    {
+        $subscribers = Subscriber::withCount([
+            'received_mails' => fn(Builder $receivedMails) => $receivedMails->whereSequence($sequence)
+        ])
+            ->find(array_keys(self::$mailsBySubscribers))
+            ->mapWithKeys(fn(Subscriber $subscriber) => [
+                $subscriber->id => $subscriber,
+            ]);
+
+        $completedSubscriberIds = [];
+        foreach (self::$mailsBySubscribers as $subscriberId => $mailIds) {
+            $subscriber = $subscribers[$subscriberId];
+
+            if ($subscriber->received_mails_count === count($mailIds)) {
+                $completedSubscriberIds[] = $subscriber->id;
+            }
+        }
+
+        SequenceSubscriber::query()
+            ->whereBelongsTo($sequence)
+            ->whereIn('subscriber_id', $completedSubscriberIds)
+            ->update([
+                'status' => SubscriberStatus::Completed,
+            ]);
+    }
+
+    /**
+     * @param Collection<Subscriber> $audience
+     */
+    private static function addMailToAudience(Collection $audience, SequenceMail $mail): void
+    {
+        foreach ($audience as $subscriber) {
+            if (!Arr::get(self::$mailsBySubscribers, $subscriber->id)) {
+                self::$mailsBySubscribers[$subscriber->id] = [];
+            }
+
+            self::$mailsBySubscribers[$subscriber->id][] = $mail->id;
+        }
     }
 }

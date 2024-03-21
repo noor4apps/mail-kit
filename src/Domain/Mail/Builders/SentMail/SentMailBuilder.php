@@ -27,6 +27,13 @@ class SentMailBuilder extends Builder
             ->where('sendable_type', $sendable->type());
     }
 
+    public function whereSequence(Sequence $sequence): self
+    {
+        return $this
+            ->whereIn('sendable_id', $sequence->mails->pluck('id'))
+            ->where('sendable_type', SequenceMail::class);
+    }
+
     public function countOf(Sendable $model): int
     {
         return $this->whereSendable($model)->count();
