@@ -6,9 +6,12 @@ use Domain\Mail\DataTransferObjects\PerformanceData;
 use Domain\Mail\Models\SentMail;
 use Domain\Shared\Models\User;
 use Domain\Shared\ValueObjects\Percent;
+use Domain\Subscriber\DataTransferObjects\DailySubscribersData;
 use Domain\Subscriber\DataTransferObjects\NewSubscribersCountData;
 use Domain\Shared\Filters\DateFilter;
+use Domain\Subscriber\DataTransferObjects\SubscriberData;
 use Domain\Subscriber\Models\Subscriber;
+use Illuminate\Support\Collection;
 
 class GetDashboardViewModel extends ViewModel
 {
@@ -49,6 +52,32 @@ class GetDashboardViewModel extends ViewModel
         return Percent::from(
             SentMail::whereClicked()->count(), $total
         );
+    }
+
+    /**
+     * @return Collection<DailySubscribersData>
+     */
+    public function dailySubscribers(): Collection
+    {
+        return Subscriber::query()
+            ->selectRaw("count(*) count, date_format(subscribed_at, '%Y-%m-%d') day")
+            ->groupByRaw('day')
+            ->orderByDesc('day')
+            ->get()
+            ->map(fn(Subscriber $data) => DailySubscribersData::from($data));
+    }
+
+    /**
+     * @return Collection<SubscriberData>
+     */
+    public function recentSubscribers(): Collection
+    {
+        return Subscriber::with(['form', 'tags'])
+            ->orderByDesc('subscribed_at')
+            ->take(10)
+            ->get()
+            ->map
+            ->getData();
     }
 
 }

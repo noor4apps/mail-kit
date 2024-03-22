@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Web\Controllers\GetDashboardController;
 use App\Http\Web\Controllers\Mail\Broadcast\BroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\PreviewBroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\SendBroadcastController;
@@ -35,11 +36,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', GetDashboardController::class)->name('dashboard');
+
     Route::resource('subscribers', SubscriberController::class);
     Route::post('subscribers/import', ImportSubscribersController::class);
 
