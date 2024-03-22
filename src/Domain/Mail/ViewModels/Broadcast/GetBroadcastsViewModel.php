@@ -2,7 +2,6 @@
 
 namespace Domain\Mail\ViewModels\Broadcast;
 
-use Domain\Mail\Actions\GetPerformanceAction;
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
 use Domain\Mail\DataTransferObjects\PerformanceData;
 use Domain\Mail\Models\Broadcast\Broadcast;
@@ -26,7 +25,7 @@ class GetBroadcastsViewModel extends ViewModel
     {
         return Broadcast::all()
             ->mapWithKeys(fn (Broadcast $broadcast) => [
-                $broadcast->id => GetPerformanceAction::execute($broadcast),
+                $broadcast->id => $broadcast->performance(),
             ]);
     }
 }

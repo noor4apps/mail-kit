@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import FiltersForm from "@/Components/Filter/Form.vue";
+import PerformanceLine from "@/Components/Mail/PerformanceLine.vue"
 
 export default {
     components: {
@@ -9,6 +10,7 @@ export default {
         AuthenticatedLayout,
         Head,
         Link,
+        PerformanceLine
     },
     props: {
         model: {
@@ -73,6 +75,7 @@ export default {
                     Sent
                 </span>
             </h2>
+            <PerformanceLine v-if="model.broadcast?.status === 'sent'" :performance="model.performance" class="inline-flex" />
         </template>
         <div class="py-12 max-w-7xl">
             <form class="w-full max-w-lg mx-auto" @submit.prevent="submit">

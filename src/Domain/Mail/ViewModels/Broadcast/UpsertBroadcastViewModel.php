@@ -3,6 +3,7 @@
 namespace Domain\Mail\ViewModels\Broadcast;
 
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
+use Domain\Mail\DataTransferObjects\PerformanceData;
 use Domain\Mail\Models\Broadcast\Broadcast;
 use Domain\Shared\ViewModels\Concerns\HasForms;
 use Domain\Shared\ViewModels\Concerns\HasTags;
@@ -25,4 +26,14 @@ class UpsertBroadcastViewModel extends ViewModel
 
         return $this->broadcast->getData();
     }
+
+    public function performance(): ?PerformanceData
+    {
+        if (!$this->broadcast) {
+            return null;
+        }
+
+        return $this->broadcast->performance();
+    }
+
 }

@@ -22,4 +22,15 @@ class GetSequencesViewModel extends ViewModel
             ->get()
             ->map->getData();
     }
+
+    /**
+     * @return Collection<int, PerformanceData>
+     */
+    public function performances(): Collection
+    {
+        return Sequence::all()
+            ->mapWithKeys(fn (Sequence $sequence) => [
+                $sequence->id => $sequence->performance(),
+            ]);
+    }
 }

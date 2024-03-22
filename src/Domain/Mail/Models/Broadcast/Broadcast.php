@@ -5,8 +5,10 @@ namespace Domain\Mail\Models\Broadcast;
 use Domain\Mail\Contracts\Sendable;
 use Domain\Mail\DataTransferObjects\Broadcast\BroadcastData;
 use Domain\Mail\DataTransferObjects\FilterData;
+use Domain\Mail\DataTransferObjects\PerformanceData;
 use Domain\Mail\Models\Casts\FiltersCast;
 use Domain\Mail\Enums\Broadcast\BroadcastStatus;
+use Domain\Mail\Models\Concerns\HasPerformance;
 use Domain\Mail\Models\SentMail;
 use Domain\Shared\Models\BaseModel;
 use Domain\Shared\Models\Concerns\HasUser;
@@ -21,6 +23,7 @@ class Broadcast extends BaseModel implements Sendable
     use WithData;
     use HasUser;
     use HasAudience;
+    use HasPerformance;
 
     protected $dataClass = BroadcastData::class;
 
@@ -87,5 +90,18 @@ class Broadcast extends BaseModel implements Sendable
     protected function audienceQuery(): Builder
     {
         return Subscriber::query();
+    }
+
+    // -------- HasPerformance --------
+
+    public function performance(): PerformanceData
+    {
+        $total = SentMail::countOf($this);
+
+        return new PerformanceData(
+            total: $total,
+            open_rate: $this->openRate($total),
+            click_rate: $this->clickRate($total),
+        );
     }
 }

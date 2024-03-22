@@ -82,7 +82,7 @@ export default {
                 </span>
             </h2>
             <div>
-                <p>PerformanceLine</p>
+                <PerformanceLine v-if="model.sequence.status === 'published'" :performance="model.performance" label="Subscribers" class="inline-flex" />
                 <Link v-if="model.sequence.status === 'published'" :href="`/sequences/${model.sequence.id}/reports`" class="ml-4 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                     See Reports
                 </Link>

@@ -1,12 +1,14 @@
 <script>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link } from '@inertiajs/vue3';
+import PerformanceLine from "@/Components/Mail/PerformanceLine.vue";
 
 export default {
     components: {
         AuthenticatedLayout,
         Head,
         Link,
+        PerformanceLine,
     },
     props: {
         model: {
@@ -69,7 +71,8 @@ export default {
                         <div class="text-sm text-gray-900">{{ sequence.status }}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div>-</div>
+                        <PerformanceLine v-if="sequence.status === 'published'" :performance="model.performances[sequence.id]" label="Subscribers" />
+                        <div v-else>-</div>
                     </td>
                     <td class="px-6 py-4">
                         <button @click="remove(sequence)" class="bg-transparent hover:bg-red-500 text-red-700 hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded" type="button">

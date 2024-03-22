@@ -25,6 +25,11 @@ class EditSequenceContentViewModel extends ViewModel
         return $this->sequence->load('mails.schedule')->getData();
     }
 
+    public function performance(): PerformanceData
+    {
+        return $this->sequence->performance();
+    }
+
     public function dummyMail(): SequenceMailData
     {
         return SequenceMailData::dummy();
