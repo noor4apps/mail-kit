@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Web\Controllers\Automation\AutomationController;
 use App\Http\Web\Controllers\GetDashboardController;
 use App\Http\Web\Controllers\Mail\Broadcast\BroadcastController;
 use App\Http\Web\Controllers\Mail\Broadcast\PreviewBroadcastController;
@@ -52,6 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('sequences/{sequence}/mails', SequenceMailController::class);
     Route::get('sequences/{sequence}/reports', GetSequenceReportController::class);
     Route::get('sequences/{sequence}/mails/{mail}/preview', PreviewSequenceMailController::class);
+
+    Route::resource('automations', AutomationController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
