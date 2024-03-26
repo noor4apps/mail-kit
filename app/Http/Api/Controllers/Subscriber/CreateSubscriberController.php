@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Api\Subscriber;
+namespace App\Http\Api\Controllers\Subscriber;
 
 use Domain\Subscriber\Actions\UpsertSubscriberAction;
 use Domain\Subscriber\DataTransferObjects\SubscriberData;
